@@ -37,4 +37,18 @@ to install).
 
 Fonts: Livvic (titles, buttons, status) and Inter (details), both embedded.
 
+## AdGuard DNS / ad-blocker usage
+
+Don't want to touch the hosts file, or block ads on other devices? The same
+blocklist is available in AdGuard filter syntax:
+
+```
+https://raw.githubusercontent.com/starkayc/BlitzAdBlocker/master/blitz-adblock.txt
+```
+
+Add it as a custom list in AdGuard DNS or any AdGuard-compatible blocker
+(AdGuard Home: **Filters → DNS blocklists → Add blocklist → custom list**;
+AdGuard DNS personal server: **Filters → Custom rules list**). The list ships
+as `blitz-adblock.txt` in every release too.
+
 Releases are built by GitHub Actions and ship with a sha256 checksum.

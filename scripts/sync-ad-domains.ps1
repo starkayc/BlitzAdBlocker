@@ -43,9 +43,9 @@ $Excluded = @(
 # Existing blocked hosts.
 $existing = @()
 if (Test-Path $ListFile) {
-    $existing = (Get-Content $ListFile) |
-        Where-Object { $_ -match '^\s*"(?<h>[^"]+)",\s*$' } |
-        ForEach-Object { $Matches.h.ToLowerInvariant() }
+    $existing = Get-Content $ListFile | ForEach-Object {
+        foreach ($m in [regex]::Matches($_, '"(?<h>[^"]+)"')) { $m.Groups['h'].Value.ToLowerInvariant() }
+    }
 }
 $existingSet = [System.Collections.Generic.HashSet[string]]::new([string[]]$existing, [System.StringComparer]::OrdinalIgnoreCase)
 

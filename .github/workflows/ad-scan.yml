@@ -71,7 +71,8 @@ jobs:
           git config user.name 'BlitzAdBlocker bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           $ver = Get-Content 'blitz-version.txt'
-          git add src/BlitzAdBlocker/BlockedDomains.cs
+          pwsh scripts/generate-adguard-list.ps1
+          git add src/BlitzAdBlocker/BlockedDomains.cs blitz-adblock.txt
           git commit -m "ad-scan: new ad domains in Blitz $ver"
           git push origin "HEAD:ad-scan/update"
           gh pr create --title "ad-scan: new ad domains in Blitz $ver" `

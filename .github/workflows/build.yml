@@ -29,6 +29,13 @@ jobs:
           if ($size -lt 10000) { throw "exe suspiciously small: $size bytes" }
           Write-Host "BlitzAdBlocker.exe: $size bytes"
 
+      - name: Check AdGuard list is current
+        run: |
+          pwsh scripts/generate-adguard-list.ps1
+          if (git status --porcelain -- blitz-adblock.txt) {
+            throw 'blitz-adblock.txt is out of sync with BlockedDomains.cs'
+          }
+
       - name: Write sha256 checksum
         run: |
           $h = (Get-FileHash 'src\BlitzAdBlocker\bin\Release\net48\BlitzAdBlocker.exe' -Algorithm SHA256).Hash.ToLower()
@@ -46,4 +53,5 @@ jobs:
           files: |
             src/BlitzAdBlocker/bin/Release/net48/BlitzAdBlocker.exe
             src/BlitzAdBlocker/bin/Release/net48/BlitzAdBlocker.exe.sha256
+            blitz-adblock.txt
           generate_release_notes: true

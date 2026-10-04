@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+
+# Blitz binary backups (pristine copies, private)
+backups/
+
+# Published/self-contained builds — releases go out via GitHub Actions
+dist/
+
+# VS junk
+.vs/
+*.user
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store

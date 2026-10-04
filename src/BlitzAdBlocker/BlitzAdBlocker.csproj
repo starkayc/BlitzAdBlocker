@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>BlitzAdBlocker</AssemblyName>
+    <RootNamespace>BlitzAdBlocker</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\blitz.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <Product>Blitz AdBlocker</Product>
+    <AssemblyTitle>Blitz AdBlocker</AssemblyTitle>
+    <Description>Blocks Blitz ad networks in the hosts file.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- lets any SDK-only machine compile net48 without the old SDK/MSBuild -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\blitz.ico" />
+    <Resource Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
+
+</Project>

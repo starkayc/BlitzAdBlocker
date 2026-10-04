@@ -23,7 +23,7 @@ $AdSuffixes = @(
     'bidswitch.net', '3lift.com', 'crwdcntrl.net', 'omnitagjs.com', 'a-mo.net',
     'fastclick.net', '33across.com', 'hadronid.net', 'ipredictive.com',
     'fwmrm.net', 'optable.co', 'everesttech.net', 'inmobi.com',
-    'privacymanager.io', 'prebid.cloud', 'amazon-adsystem.com', 'pubmatic.com',
+    'privacymanager.io', 'prebid.cloud', 'pubmatic.com',
     'openx.net', 'adsrvr.org', 'casalemedia.com', 'sascdn.com',
     'smartadserver.com', 'rubiconproject.com', 'primis.tech', 'viralize.tv',
     '360yield.com', 'nexverse.ai', 'blismedia.com', 'kargo.com',
@@ -37,7 +37,7 @@ $AdSuffixes = @(
 
 # Never block, even if a suffix matched.
 $Excluded = @(
-    'blitz.gg', 'blitzapp.gg', 'google.com', 'doubleclick.net'
+    'blitz.gg', 'blitzapp.gg', 'google.com'
 )
 
 # Existing blocked hosts.

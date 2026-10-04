@@ -1,12 +1,12 @@
 name: ad-scan
 
-# Daily-ish check for new ad domains in the shipped Blitz app. Blitz updates
+# Weekly check for new ad domains in the shipped Blitz app. Blitz updates
 # via GitHub Releases (theblitzapp/blitz-core), so the latest release asset is
 # always the current bundle.
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # 04:00 UTC, every day
+    - cron: '0 4 * * 1'   # 04:00 UTC, Mondays
   workflow_dispatch:
 
 permissions:
@@ -75,6 +75,11 @@ jobs:
           git add src/BlitzAdBlocker/BlockedDomains.cs blitz-adblock.txt
           git commit -m "ad-scan: new ad domains in Blitz $ver"
           git push origin "HEAD:ad-scan/update"
-          gh pr create --title "ad-scan: new ad domains in Blitz $ver" `
-            --body "Automated scan of the shipped Blitz bundle found new ad-network hosts.`n`nReview before merging — the hosts block goes into effect on the next app release." `
-            --head ad-scan/update
+          $title = "ad-scan: new ad domains in Blitz $ver"
+          $body = "Automated scan of the shipped Blitz bundle found new ad-network hosts.`n`nReview before merging — the hosts block goes into effect on the next app release."
+          $open = gh pr list --head ad-scan/update --state open --json number
+          if ($open -match '\d') {
+            gh pr edit --title $title --body $body
+          } else {
+            gh pr create --title $title --body $body --head ad-scan/update
+          }

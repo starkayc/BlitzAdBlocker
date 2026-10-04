@@ -32,7 +32,7 @@
             <Grid Grid.Row="0" Background="{DynamicResource WindowBg}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
                     <Image Source="Assets/blitz.ico" Width="20" Height="20" Stretch="Uniform" Margin="0,0,9,0" />
-                    <TextBlock Text="Blitz AdBlocker" FontSize="13" FontFamily="{DynamicResource FontDisplayBold}"
+                    <TextBlock Text="Blitz AdBlocker" FontSize="13" FontFamily="{DynamicResource FontDisplayBold}" FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -53,7 +53,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Status card -->
@@ -78,9 +77,9 @@
                 <!-- Actions -->
                 <Grid Grid.Row="1" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" x:Name="BtnEnable" Style="{StaticResource PrimaryButton}"
@@ -103,7 +102,13 @@
                             <TextBlock Text="Disable" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Grid.Column="3" Style="{StaticResource IconButton}" ToolTip="Refresh status"
+                    <Button Grid.Column="3" Style="{StaticResource IconButton}" ToolTip="Open hosts file location"
+                            Click="OnOpenHostsFolder">
+                        <Path Data="{StaticResource FolderGeometry}" Width="17" Height="17" Stretch="Uniform"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    </Button>
+                    <Button Grid.Column="2" Margin="0,0,8,0" Style="{StaticResource IconButton}" ToolTip="Refresh status"
                             Click="OnRefresh">
                         <Path Data="{StaticResource RefreshGeometry}" Width="17" Height="17" Stretch="Uniform"
                               Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
@@ -129,15 +134,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Footer -->
-                <TextBlock Grid.Row="3" FontFamily="{DynamicResource FontBody}" FontSize="10.5"
-                           Foreground="{DynamicResource FooterFg}" LineHeight="15" TextWrapping="Wrap">
-                    <Run Text="Hosts entries live between the " />
-                    <Run Text="# BEGIN BLITZADBLOCK" FontFamily="{DynamicResource FontBodySemi}" />
-                    <Run Text=" and " />
-                    <Run Text="# END BLITZADBLOCK" FontFamily="{DynamicResource FontBodySemi}" />
-                    <Run Text=" markers. A backup (hosts.blitzadblock.bak) is saved before every change." />
-                </TextBlock>
             </Grid>
         </Grid>
     </Border>

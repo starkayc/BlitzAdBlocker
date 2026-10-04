@@ -75,7 +75,7 @@ internal static class BlockedDomains
         "contextweb.com", "bh.contextweb.com", "intentiq.com", "agent.intentiq.com",
         "reports.intentiq.com", "nexx360.io", "fast.nexx360.io",
         "dxkulture.com", "ads.dxkulture.com", "servenobid.com", "ads.servenobid.com",
-        "prod.bidr.io", "match.prod.bidr.io", "bidswitch.net",
+        "prod.bidr.io", "match.prod.bidr.io",
         "avocet.io", "vtrk.dv.tech", "dv.tech",
     };
 }

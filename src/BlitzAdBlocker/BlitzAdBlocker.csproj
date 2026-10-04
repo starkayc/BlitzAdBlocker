@@ -9,7 +9,7 @@
     <RootNamespace>BlitzAdBlocker</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\blitz.ico</ApplicationIcon>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Product>Blitz AdBlocker</Product>
     <AssemblyTitle>Blitz AdBlocker</AssemblyTitle>
     <Description>Blocks Blitz ad networks in the hosts file.</Description>
@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\blitz.ico" />
-    <Resource Include="Assets\Fonts\*.ttf" />
   </ItemGroup>
 
 </Project>

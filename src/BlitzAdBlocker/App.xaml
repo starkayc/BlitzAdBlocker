@@ -10,7 +10,6 @@
             <SolidColorBrush x:Key="CardBg" Color="#24272C" />
             <SolidColorBrush x:Key="CardBorder" Color="#33373D" />
             <SolidColorBrush x:Key="TextPrimary" Color="#F2F3F5" />
-            <SolidColorBrush x:Key="TextSecondary" Color="#9AA1A9" />
             <SolidColorBrush x:Key="IconFg" Color="#D7DBDF" />
             <SolidColorBrush x:Key="IconHover" Color="#353A40" />
             <SolidColorBrush x:Key="IconPressed" Color="#3F454C" />
@@ -24,18 +23,18 @@
             <SolidColorBrush x:Key="ScrollThumbHover" Color="#5A6068" />
             <SolidColorBrush x:Key="FooterFg" Color="#B3BAC2" />
 
-            <!-- Embedded fonts: Livvic for display (titles/buttons/status),
-                 Inter for body text -->
-            <FontFamily x:Key="FontDisplay">pack://application:,,,/Assets/Fonts/Livvic-Regular.ttf#Livvic</FontFamily>
-            <FontFamily x:Key="FontDisplaySemi">pack://application:,,,/Assets/Fonts/Livvic-SemiBold.ttf#Livvic</FontFamily>
-            <FontFamily x:Key="FontDisplayBold">pack://application:,,,/Assets/Fonts/Livvic-Bold.ttf#Livvic</FontFamily>
-            <FontFamily x:Key="FontBody">pack://application:,,,/Assets/Fonts/Inter-Regular.ttf#Inter</FontFamily>
-            <FontFamily x:Key="FontBodySemi">pack://application:,,,/Assets/Fonts/Inter-SemiBold.ttf#Inter</FontFamily>
+            <!-- System font: Segoe UI (ships with Windows 10/11) -->
+            <FontFamily x:Key="FontDisplay">Segoe UI</FontFamily>
+            <FontFamily x:Key="FontDisplaySemi">Segoe UI Semibold</FontFamily>
+            <FontFamily x:Key="FontDisplayBold">Segoe UI</FontFamily>
+            <FontFamily x:Key="FontBody">Segoe UI</FontFamily>
+            <FontFamily x:Key="FontBodySemi">Segoe UI Semibold</FontFamily>
 
             <!-- Feather-style stroke icons -->
             <Geometry x:Key="ShieldGeometry">M 12 22 S 8 18 8 12 V 5 L 12 2 L 16 5 V 12 C 16 18 12 22 12 22 Z</Geometry>
             <Geometry x:Key="PowerGeometry">M 18.36 6.64 A 9 9 0 1 1 5.64 6.64 M 12 2 L 12 12</Geometry>
             <Geometry x:Key="RefreshGeometry">M 23 4 L 23 10 L 17 10 M 20.49 15 A 9 9 0 1 1 18.37 5.64 L 23 10</Geometry>
+            <Geometry x:Key="FolderGeometry">M 22 19 A 2 2 0 0 1 20 21 L 4 21 A 2 2 0 0 1 2 19 L 2 5 A 2 2 0 0 1 4 3 L 9 3 L 11 5 L 20 5 A 2 2 0 0 1 22 7 Z</Geometry>
             <Geometry x:Key="ShieldCheckGeometry">M 12 22 S 8 18 8 12 V 5 L 12 2 L 16 5 V 12 C 16 18 12 22 12 22 Z M 9 11.5 L 11 13.5 L 15.5 9</Geometry>
 
             <!-- Primary action: solid accent, rounded -->

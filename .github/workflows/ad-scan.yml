@@ -1,0 +1,79 @@
+name: ad-scan
+
+# Daily-ish check for new ad domains in the shipped Blitz app. Blitz updates
+# via GitHub Releases (theblitzapp/blitz-core), so the latest release asset is
+# always the current bundle.
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 04:00 UTC, every day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scan:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601866ffabcc424 # v4.0.3
+        with:
+          node-version: 20
+
+      - name: Resolve latest Blitz release
+        id: release
+        shell: pwsh
+        run: |
+          $rel = Invoke-RestMethod 'https://api.github.com/repos/theblitzapp/blitz-core/releases/latest' -Headers @{ 'User-Agent' = 'BlitzAdBlocker' }
+          $asset = $rel.assets | Where-Object {
+            $_.name -match '\.exe$' -and $_.name -notmatch 'arm64|uninstall|\.blockmap$'
+          } | Select-Object -First 1
+          if (-not $asset) { throw "no Setup exe asset in $($rel.tag_name) release" }
+          "Update feed version: $($rel.tag_name) ($(Get-Date $rel.published_at -Format 'yyyy-MM-dd'))" | Out-Host
+          Set-Content -Encoding ascii -Path 'blitz-url.txt' -Value $asset.browser_download_url
+          Set-Content -Encoding ascii -Path 'blitz-version.txt' -Value $rel.tag_name
+
+      - name: Download Blitz Setup
+        shell: pwsh
+        run: |
+          $url = Get-Content 'blitz-url.txt'
+          Invoke-WebRequest -Uri $url -OutFile 'blitz-setup.exe' -UseBasicParsing
+
+      - name: Install silently
+        shell: pwsh
+        run: |
+          Start-Process -Wait -FilePath (Resolve-Path 'blitz-setup.exe') -ArgumentList '/S'
+          $app = "$env:LOCALAPPDATA\Programs\Blitz"
+          if (-not (Test-Path "$app\resources\app.asar")) { throw "app.asar missing after install: $app" }
+          $ver = Get-Content 'blitz-version.txt'
+          "... installed $ver" | Out-Host
+
+      - name: Extract app.asar
+        shell: pwsh
+        run: npx -y @electron/asar extract "$env:LOCALAPPDATA\Programs\Blitz\resources\app.asar" scan-out
+
+      - name: Scan bundles for new ad domains
+        id: scan
+        shell: pwsh
+        run: pwsh scripts/sync-ad-domains.ps1 -AppDir scan-out
+
+      - name: Open PR with new domains
+        shell: pwsh
+        run: |
+          $changed = git status --porcelain -- src/BlitzAdBlocker/BlockedDomains.cs
+          if (-not $changed) {
+            echo 'no changes — nothing to do'
+            exit 0
+          }
+          git config user.name 'BlitzAdBlocker bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          $ver = Get-Content 'blitz-version.txt'
+          git add src/BlitzAdBlocker/BlockedDomains.cs
+          git commit -m "ad-scan: new ad domains in Blitz $ver"
+          git push origin "HEAD:ad-scan/update"
+          gh pr create --title "ad-scan: new ad domains in Blitz $ver" `
+            --body "Automated scan of the shipped Blitz bundle found new ad-network hosts.`n`nReview before merging — the hosts block goes into effect on the next app release." `
+            --head ad-scan/update

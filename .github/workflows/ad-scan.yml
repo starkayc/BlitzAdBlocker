@@ -1,8 +1,8 @@
 name: ad-scan
 
-# Weekly check for new ad domains in the shipped Blitz app. Blitz updates
-# via GitHub Releases (theblitzapp/blitz-core), so the latest release asset is
-# always the current bundle.
+# Weekly check for new ad domains in the shipped Blitz app. Blitz ships via
+# electron-updater, so https://blitz-main.blitz.gg/latest.yml is the current
+# version, and blitz-main.blitz.gg hosts the Setup exe.
 
 on:
   schedule:
@@ -27,20 +27,26 @@ jobs:
         id: release
         shell: pwsh
         run: |
-          $rel = Invoke-RestMethod 'https://api.github.com/repos/theblitzapp/blitz-core/releases/latest' -Headers @{ 'User-Agent' = 'BlitzAdBlocker' }
-          $asset = $rel.assets | Where-Object {
-            $_.name -match '\.exe$' -and $_.name -notmatch 'arm64|uninstall|\.blockmap$'
-          } | Select-Object -First 1
-          if (-not $asset) { throw "no Setup exe asset in $($rel.tag_name) release" }
-          "Update feed version: $($rel.tag_name) ($(Get-Date $rel.published_at -Format 'yyyy-MM-dd'))" | Out-Host
-          Set-Content -Encoding ascii -Path 'blitz-url.txt' -Value $asset.browser_download_url
-          Set-Content -Encoding ascii -Path 'blitz-version.txt' -Value $rel.tag_name
+          # electron-updater feed. Content-Type is octet-stream, so the body
+          # arrives as a byte[] and needs decoding before it can be matched.
+          $base = 'https://blitz-main.blitz.gg'
+          $resp = Invoke-WebRequest "$base/latest.yml" -UseBasicParsing
+          $txt = if ($resp.Content -is [byte[]]) { [Text.Encoding]::UTF8.GetString($resp.Content) } else { [string]$resp.Content }
+          $ver  = [regex]::Match($txt, '(?m)^version:\s*(\S+)').Groups[1].Value
+          $file = [regex]::Match($txt, '(?m)^path:\s*(\S+)').Groups[1].Value
+          $sha  = [regex]::Match($txt, '(?m)^sha512:\s*(\S+)').Groups[1].Value
+          if (-not $ver -or -not $file -or -not $sha) { throw "cannot parse $base/latest.yml" }
+          "Update feed version: $ver ($file)" | Out-Host
+          "url=$base/$file" >> $env:GITHUB_OUTPUT
+          "version=$ver"    >> $env:GITHUB_OUTPUT
+          "sha512=$sha"     >> $env:GITHUB_OUTPUT
 
       - name: Download Blitz Setup
         shell: pwsh
         run: |
-          $url = Get-Content 'blitz-url.txt'
-          Invoke-WebRequest -Uri $url -OutFile 'blitz-setup.exe' -UseBasicParsing
+          Invoke-WebRequest -Uri '${{ steps.release.outputs.url }}' -OutFile 'blitz-setup.exe' -UseBasicParsing
+          $actual = [Convert]::ToBase64String([Convert]::FromHexString((Get-FileHash 'blitz-setup.exe' -Algorithm SHA512).Hash))
+          if ($actual -ne '${{ steps.release.outputs.sha512 }}') { throw 'blitz-setup.exe sha512 does not match latest.yml' }
 
       - name: Install silently
         shell: pwsh
@@ -48,8 +54,7 @@ jobs:
           Start-Process -Wait -FilePath (Resolve-Path 'blitz-setup.exe') -ArgumentList '/S'
           $app = "$env:LOCALAPPDATA\Programs\Blitz"
           if (-not (Test-Path "$app\resources\app.asar")) { throw "app.asar missing after install: $app" }
-          $ver = Get-Content 'blitz-version.txt'
-          "... installed $ver" | Out-Host
+          "... installed ${{ steps.release.outputs.version }}" | Out-Host
 
       - name: Extract app.asar
         shell: pwsh
@@ -70,7 +75,7 @@ jobs:
           }
           git config user.name 'BlitzAdBlocker bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          $ver = Get-Content 'blitz-version.txt'
+          $ver = '${{ steps.release.outputs.version }}'
           pwsh scripts/generate-adguard-list.ps1
           git add src/BlitzAdBlocker/BlockedDomains.cs blitz-adblock.txt
           git commit -m "ad-scan: new ad domains in Blitz $ver"
